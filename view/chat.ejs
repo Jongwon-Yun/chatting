@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var chat = io('http://14.50.39.141:2000/chat');
+
+        chat.emit("login", {
+            name:"<%=nic_name%>",
+            user_id: "yjw@naver.com"
+        });
+
+        chat.on("login", function(data) {
+            let block1 = document.createElement("div");
+            let block2 = document.createElement("strong");
+            let text1 = document.createTextNode(data);
+            let text2 = document.createTextNode("님이 입장하셨습니다");
+            block2.appendChild(text1);
+            block1.appendChild(block2);
+            block1.appendChild(text2);
+
+            document.getElementById("chatLogs").appendChild(block1);
+        })
+
+
+        function send() {
+            chat.emit("chat message", {
+                name :'<%=nic_name%>',
+                room :'<%=room%>',
+                msg :document.getElementById('chat_box').value
+            })
+        }
+
+        chat.on("chat message", function(data) {
+            console.log(data);
+            let text1 = document.createTextNode(data.msg);
+            document.getElementById("chatArea").appendChild(text1);
+        })
+    </script>
+</head>
+<body>
+    <div class="container">
+        chatting
+
+    </div>
+    <div id="chatLogs"></div>
+    <div id="chatArea"></div>
+    <div>
+        <input type="text" id="chat_box">
+        <button onclick="send()">전송</button>
+    </div>
+    
+</body>
+</html>

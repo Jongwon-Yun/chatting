@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.emit("login", {
+            name: "<%=nic_name%>",
+            user_id: "yjw@naver.com"
+        });
+
+        socket.on("login", function(data) {
+            let block1 = document.createElement("div");
+            let block2 = document.createElement("strong");
+            let text1 = document.createTextNode(data);
+            let text2 = document.createTextNode("님이 입장하셨습니다");
+            block2.appendChild(text1);
+            block1.appendChild(block2);
+            block1.appendChild(text2);
+
+            document.getElementById("chatLogs").appendChild(block1);
+        })
+
+        function send() {
+            socket.emit("chat", {
+                msg : document.getElementById("chat_box").value
+            })
+        }
+
+        socket.on("chat",function(data) {
+            let text1 = document.createTextNode(data.msg);
+            document.getElementById("chatArea").appendChild(text1);
+        })
+    </script>
+</head>
+<body>
+    <div class="container">
+        chatting
+
+    </div>
+    <div id="chatLogs"></div>
+    <div id="chatArea"></div>
+    <div>
+        <input type="text" id="chat_box">
+        <button onclick="send()">전송</button>
+    </div>
+    <div>
+    <form method="POST" action="made_room">
+        <select name="chat_target">
+            <% for(var i=0;i<user_list.length;i++){ %>
+            <option value="<%=user_list[i].name%>"><%=user_list[i].name%></option> 
+            <% } %>
+        </select>
+        <label for="room_title">방제 : </label>
+        <input type="text" name="room_title">
+        <label for="anony">익명 : </label>
+        <select name="anony">
+            <option value="true">익명 활성화</option>
+            <option value="false">익명 비활성화</option>
+        </select>
+        <button type="submit">만들기</button>
+    </form>
+    </div>
+
+    <div id="room_list">
+        <h3>room list</h3>
+        <% for(var i =0; i<room_list.length; i++){ %>
+            <form action="chat" method="POST">
+            <button type="submit" name ="room" value="<%=room_list[i].room_title%>"><%=room_list[i].room_title%></button>
+            </form>
+        <% } %>
+    </div>
+</body>
+</html>
