@@ -6,7 +6,7 @@
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var chat = io('http://14.50.39.141:2000/chat');
+        var chat = io('http://192.168.35.185:2000/chat');
 
         chat.emit("login", {
             name:"<%=nic_name%>",
